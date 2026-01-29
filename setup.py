@@ -17,6 +17,7 @@ _install_requires = [
     "numpy",
     "crcmod",
     "opencv-python",
+    "psutil",
     #
     # to use RGB camera in addition to the visual
     "imutils",
