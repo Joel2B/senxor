@@ -37,13 +37,17 @@ def attach_sys_monitor(viewer: QtWidgets.QMainWindow):
                 return
             mem_mb = viewer._sysmon_proc.memory_info().rss / (1024*1024.0)
             cpu = viewer._sysmon_proc.cpu_percent(None)
-            viewer._sysmon_lbl.setText(f"CPU: {cpu:.1f}% | RAM: {mem_mb:.1f} MB")
+            cpu_count = psutil.cpu_count(logical=True) or 1
+            cpu = cpu / cpu_count
+            viewer._sysmon_lbl.setText(
+                f"CPU (app): {cpu:.1f}% | RAM: {mem_mb:.1f} MB"
+            )
         except Exception:
             pass
 
     try:
         t = QtCore.QTimer(viewer)
-        t.setInterval(1500)
+        t.setInterval(1000)
         t.timeout.connect(_tick)
         t.start()
         viewer._sysmon_timer = t
