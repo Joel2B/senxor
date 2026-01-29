@@ -11,7 +11,6 @@ try:
     from senxor.mi48 import MI48
     from senxor.utils import data_to_frame, connect_senxor
 except Exception:
-    MI48 = None
 
     def data_to_frame(data, shape, hflip=False):
         arr = (
