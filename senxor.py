@@ -1089,6 +1089,32 @@ class Viewer(QtWidgets.QMainWindow):
         w, h = self.get_render_size_current()
         vis = cv.resize(vis, (w, h), interpolation=cv.INTER_NEAREST)
 
+        def put_label(img, text, org, color):
+            x, y = int(org[0]), int(org[1])
+            for dx in (-1, 0, 1):
+                for dy in (-1, 0, 1):
+                    if dx or dy:
+                        cv.putText(
+                            img,
+                            text,
+                            (x + dx, y + dy),
+                            cv.FONT_HERSHEY_SIMPLEX,
+                            0.45,
+                            (0, 0, 0),
+                            2,
+                            cv.LINE_AA,
+                        )
+            cv.putText(
+                img,
+                text,
+                (x, y),
+                cv.FONT_HERSHEY_SIMPLEX,
+                0.45,
+                color,
+                1,
+                cv.LINE_AA,
+            )
+
         if self.hover_ix is not None and self.hover_iy is not None:
             sx = max(1, int(round(w / self.src_w)))
             sy = max(1, int(round(h / self.src_h)))
@@ -1097,6 +1123,15 @@ class Viewer(QtWidgets.QMainWindow):
             cv.rectangle(
                 vis, (x0, y0), (x0 + sx - 1, y0 + sy - 1), (0, 255, 0), thickness=-1
             )
+            if self.last_frame_float is not None:
+                try:
+                    val = float(self.last_frame_float[self.hover_iy, self.hover_ix])
+                    txt = f"{val:.2f} C"
+                    tx = min(x0 + sx + 4, w - 1)
+                    ty = min(y0 + sy - 2, h - 1)
+                    put_label(vis, txt, (tx, ty), (0, 255, 0))
+                except Exception:
+                    pass
 
         if self.chk_minmax.isChecked() and self.last_frame_float is not None:
             arr = self.last_frame_float
@@ -1165,32 +1200,6 @@ class Viewer(QtWidgets.QMainWindow):
                     ty_hot = min(hot_y0 + sy - 2, h - 1)
                     tx_cold = min(cold_x0 + sx + 4, w - 1)
                     ty_cold = min(cold_y0 + sy - 2, h - 1)
-
-                    def put_label(img, text, org, color):
-                        x, y = int(org[0]), int(org[1])
-                        for dx in (-1, 0, 1):
-                            for dy in (-1, 0, 1):
-                                if dx or dy:
-                                    cv.putText(
-                                        img,
-                                        text,
-                                        (x + dx, y + dy),
-                                        cv.FONT_HERSHEY_SIMPLEX,
-                                        0.45,
-                                        (0, 0, 0),
-                                        2,
-                                        cv.LINE_AA,
-                                    )
-                        cv.putText(
-                            img,
-                            text,
-                            (x, y),
-                            cv.FONT_HERSHEY_SIMPLEX,
-                            0.45,
-                            color,
-                            1,
-                            cv.LINE_AA,
-                        )
 
                     put_label(vis, hot_txt, (tx_hot, ty_hot), (0, 0, 255))
                     put_label(vis, cold_txt, (tx_cold, ty_cold), (255, 255, 0))
