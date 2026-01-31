@@ -75,12 +75,14 @@ class Viewer(UIMixin, SensorMixin, SettingsMixin, QtWidgets.QMainWindow):
         self.scale_factor = 6
         self.render_size = (SRC_W * self.scale_factor, SRC_H * self.scale_factor)
 
-        main_mod = sys.modules.get("__main__")
-        main_path = getattr(main_mod, "__file__", sys.argv[0])
-        base_dir = os.path.dirname(main_path or os.getcwd())
-        print(base_dir)
-        if os.path.basename(base_dir).lower() == "app":
-            base_dir = os.path.dirname(base_dir)
+        if getattr(sys, "frozen", False):
+            base_dir = os.path.dirname(sys.executable)
+        else:
+            main_mod = sys.modules.get("__main__")
+            main_path = getattr(main_mod, "__file__", sys.argv[0])
+            base_dir = os.path.dirname(main_path or os.getcwd())
+            if os.path.basename(base_dir).lower() == "app":
+                base_dir = os.path.dirname(base_dir)
         self.output_dir = os.path.join(base_dir, "output")
         os.makedirs(self.output_dir, exist_ok=True)
 

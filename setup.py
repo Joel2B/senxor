@@ -17,14 +17,7 @@ _install_requires = [
     "numpy",
     "crcmod",
     "opencv-python",
-    "psutil",
     #
-    # to use RGB camera in addition to the visual
-    "imutils",
-    #
-    # to use plots, histograms, colormap etc from matplotlib
-    "matplotlib",
-    "cmapy"
 ]
 try:
     # add gpiozero to raspberry pi system; but below may fail on other arm host

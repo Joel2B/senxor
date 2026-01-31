@@ -1,0 +1,6 @@
+PyQt5
+opencv-python==4.10.0.84
+numpy==1.26.4
+pyserial
+psutil==5.9.8
+crcmod

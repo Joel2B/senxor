@@ -28,22 +28,30 @@ class SensorMixin:
             self.mi48, self.connected_port, self.port_candidates = connect_senxor(
                 src=port
             )
+            if not self.mi48:
+                msg = f"Connect failed: no device found on {port}"
+                if self.port_candidates:
+                    msg += f" | ports: {', '.join(self.port_candidates)}"
+                try:
+                    self.statusBar().showMessage(msg, 6000)
+                except Exception:
+                    pass
+                return
             try:
                 self.mi48.set_fps(min(25, self.target_fps or 25))
             except Exception:
                 pass
             # No popup; write in status bar
             try:
-                self.statusBar().showMessage(
-                    f"Connected on {self.connected_port}", 3000
-                )
+                port_txt = self.connected_port or port or "(unknown)"
+                self.statusBar().showMessage(f"Connected on {port_txt}", 3000)
             except Exception:
                 pass
             self.mark_dirty()
         except Exception as e:
             if not silent:
                 try:
-                    self.statusBar().showMessage(f"Connect failed: {e}", 5000)
+                    self.statusBar().showMessage(f"Connect failed: {e}", 6000)
                 except Exception:
                     pass
 
